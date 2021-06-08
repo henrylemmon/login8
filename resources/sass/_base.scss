@@ -1,0 +1,15 @@
+@import "./_variables";
+
+body {
+    background-color: $background;
+    color: $text;
+}
+
+.navbar {
+    background-color: $navBar;
+    box-shadow: 0 5px 10px 0 rgba(204, 204, 204, 0.3);
+    margin-bottom: 40px;
+    a {
+        color: #fff;
+    }
+}
