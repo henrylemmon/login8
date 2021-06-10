@@ -13,7 +13,7 @@ class UsersController extends Controller
      */
     public function index()
     {
-        $users = User::all();
+        $users = User::paginate(10);
 
         return view('admin.users.index', compact('users'));
     }
@@ -75,12 +75,11 @@ class UsersController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(User $user)
     {
-        //
+        $user->delete();
+
+        return redirect(route('admin.users.index'));
     }
 }
