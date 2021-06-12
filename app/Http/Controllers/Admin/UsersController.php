@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Hash;
 
 class UsersController extends Controller
 {
@@ -38,9 +39,11 @@ class UsersController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
-        $request->validated();
+        $validatedAttributes = $request->validated();
 
-        $user = User::create($request->except(['_token', 'roles']));
+        $validatedAttributes['password'] = Hash::make($validatedAttributes['password']);
+
+        $user = User::create($validatedAttributes);
 
         $user->roles()->attach($request->roles);
 
