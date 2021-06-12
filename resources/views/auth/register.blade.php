@@ -1,7 +1,7 @@
 @extends('templates.main')
 
 @section('content')
-    <h1>Register</h1>
+    <h1 class="mt-4">Register</h1>
     <div class="card form-container-card">
         <form method="POST" action="{{ route('register') }}">
             @csrf

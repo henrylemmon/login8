@@ -6,7 +6,7 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
-use App\Http\Requests\UserRequest;
+use App\Http\Requests\StoreUserRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
 
@@ -36,7 +36,7 @@ class UsersController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(UserRequest $request)
+    public function store(StoreUserRequest $request)
     {
         $request->validated();
 
@@ -76,11 +76,7 @@ class UsersController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        request()->validate([
-            'name' => 'required|max:255',
-        ]);
-
-        $user->update($request->except(['_token', 'roles', 'email', 'password']));
+        $user->update($request->except(['_token', 'roles']));
 
         $user->roles()->sync($request->roles);
 

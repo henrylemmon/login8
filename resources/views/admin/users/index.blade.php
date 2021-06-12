@@ -1,12 +1,14 @@
 @extends('templates.main')
 
 @section('content')
-    <div class="row">
+    <div class="row mt-4">
         <div class="col-12">
             <h1 class="float-start">Users</h1>
-            <a href="{{ route('admin.users.create') }}"
-               class="btn btn-sm btn-success float-end"
-               role="button">Create User</a>
+            <div class="mt-2">
+                <a href="{{ route('admin.users.create') }}"
+                   class="btn btn-sm btn-success float-end"
+                   role="button">Create User</a>
+            </div>
         </div>
     </div>
 
