@@ -6,7 +6,9 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
+use App\Http\Requests\UserRequest;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Gate;
 
 class UsersController extends Controller
 {
@@ -15,9 +17,10 @@ class UsersController extends Controller
      */
     public function index()
     {
-        $users = User::paginate(10);
-
-        return view('admin.users.index', compact('users'));
+        if (Gate::denies('logged-in')) {
+            dd('no access allowed');
+        }
+        return view('admin.users.index', ['users' => User::paginate(10)]);
     }
 
     /**
@@ -33,16 +36,15 @@ class UsersController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(UserRequest $request)
     {
-        request()->validate([
-            'name' => 'required',
-            'email'=> 'required',
-            'password' => 'required',
-        ]);
+        $request->validated();
+
         $user = User::create($request->except(['_token', 'roles']));
 
         $user->roles()->attach($request->roles);
+
+        request()->session()->flash('success', 'The User has been Created!');
 
         return redirect(route('admin.users.index'));
     }
@@ -74,9 +76,15 @@ class UsersController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        $user->update($request->except(['_token', 'roles']));
+        request()->validate([
+            'name' => 'required|max:255',
+        ]);
+
+        $user->update($request->except(['_token', 'roles', 'email', 'password']));
 
         $user->roles()->sync($request->roles);
+
+        request()->session()->flash('success', 'The User has been Edited!');
 
         return redirect(route('admin.users.index'));
     }
@@ -87,6 +95,8 @@ class UsersController extends Controller
     public function destroy(User $user)
     {
         $user->delete();
+
+        request()->session()->flash('success', 'The User has been Deleted!');
 
         return redirect(route('admin.users.index'));
     }

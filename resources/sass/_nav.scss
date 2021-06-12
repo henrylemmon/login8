@@ -2,9 +2,15 @@
 
 .navbar {
     background-color: $navBar;
+    a {
+        color: #fff;
+    }
+}
+.sub-nav {
+    background: white;
     box-shadow: 0 5px 10px 0 rgba(204, 204, 204, 0.3);
     margin-bottom: 40px;
     a {
-        color: #fff;
+        color: $primary;
     }
 }

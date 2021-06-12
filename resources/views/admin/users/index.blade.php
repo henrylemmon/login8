@@ -28,7 +28,7 @@
                     <td>{{ $user->name }}</td>
                     <td>{{ $user->email }}</td>
                     <td>
-                        <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-sm btn-primary" role="button">Edit</a>
+                        <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-sm btn-primary me-2" role="button">Edit</a>
                         <button type="button"
                            class="btn btn-sm btn-danger"
                            onclick="event.preventDefault();

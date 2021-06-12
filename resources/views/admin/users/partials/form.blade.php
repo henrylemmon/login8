@@ -7,29 +7,30 @@
         class="form-control @error('name') is-invalid @enderror"
         id="name"
         aria-describedby="name"
-        value="{{ old('name') }} @isset($user) {{ $user->name }} @endisset">
+        value="@isset($user) {{ $user->name }} @else {{ old('name') }} @endisset">
     @error('name')
         <span class="invalid-feedback" role="alert">
             <small>{{ $message }}</small>
         </span>
     @enderror
 </div>
-<div class="mb-3">
-    <label for="email" class="form-label">Email</label>
-    <input
-        name="email"
-        type="email"
-        class="form-control @error('email') is-invalid @enderror"
-        id="email"
-        aria-describedby="email"
-        value="{{ old('email') }} @isset($user) {{ $user->email }} @endisset">
-    @error('email')
-        <span class="invalid-feedback" role="alert">
-            <small>{{ $message }}</small>
-        </span>
-    @enderror
-</div>
 @isset($create)
+    <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input
+            name="email"
+            type="email"
+            class="form-control @error('email') is-invalid @enderror"
+            id="email"
+            aria-describedby="email"
+            value="@isset($user) {{ $user->email }} @else {{ old('email') }} @endisset">
+        @error('email')
+            <span class="invalid-feedback" role="alert">
+                <small>{{ $message }}</small>
+            </span>
+        @enderror
+    </div>
+
     <div class="mb-3">
         <label for="password" class="form-label">Password</label>
         <input
