@@ -15,9 +15,29 @@ class ManageUsersTest extends TestCase
     protected $length256 = '1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111@.comX';
 
     /** @test */
-    public function create_user_screen_can_be_rendered_by_authed_user()
+    public function logged_in_non_admin_cannot_access_admin_routes()
     {
         $this->signIn();
+        $userRaw = User::factory()->raw();
+        $user = User::factory()->create();
+        $this->get(route('admin.users.index'))
+            ->assertSessionHas('denied');
+        $this->get(route('admin.users.create'))
+            ->assertSessionHas('denied');
+        $this->post(route('admin.users.store', $userRaw))
+            ->assertSessionHas('denied');
+        $this->get(route('admin.users.edit', $user->id))
+            ->assertSessionHas('denied');
+        $this->patch(route('admin.users.update', $user->id), ['name' => 'asshole'])
+            ->assertSessionHas('denied');
+        $this->delete(route('admin.users.index', 1))
+            ->assertSessionHas('denied');
+    }
+
+    /** @test */
+    public function create_user_screen_can_be_rendered_by_signed_in_admin()
+    {
+        $this->signInAdmin();
 
         $this->get(route('admin.users.create'))
             ->assertStatus(200);
@@ -26,7 +46,7 @@ class ManageUsersTest extends TestCase
     /** @test */
     public function user_can_be_created()
     {
-        $this->signIn();
+        $this->signInAdmin();
 
         $user = User::factory()->raw();
 
@@ -40,7 +60,7 @@ class ManageUsersTest extends TestCase
     /** @test */
     public function creating_a_user_requires_a_name()
     {
-        $this->signIn();
+        $this->signInAdmin();
 
         $user = User::factory()->raw(['name' => '']);
 
@@ -51,7 +71,7 @@ class ManageUsersTest extends TestCase
     /** @test */
     public function creating_user_name_must_be_255_or_less()
     {
-        $this->signIn();
+        $this->signInAdmin();
 
         $user = User::factory()->raw([
             'name' => $this->length256
@@ -64,7 +84,7 @@ class ManageUsersTest extends TestCase
     /** @test */
     public function creating_a_user_requires_a_email()
     {
-        $this->signIn();
+        $this->signInAdmin();
 
         $user = User::factory()->raw(['email' => '']);
 
@@ -75,7 +95,7 @@ class ManageUsersTest extends TestCase
     /** @test */
     public function creating_user_email_must_be_255_or_less()
     {
-        $this->signIn();
+        $this->signInAdmin();
 
         $user = User::factory()->raw([
             'email' => $this->length256
@@ -88,7 +108,7 @@ class ManageUsersTest extends TestCase
     /** @test */
     public function creating_user_email_must_be_correct_format()
     {
-        $this->signIn();
+        $this->signInAdmin();
 
         $user = User::factory()->raw([
             'email' => 'asshandle'
@@ -101,7 +121,7 @@ class ManageUsersTest extends TestCase
     /** @test */
     public function creating_a_user_requires_a_password()
     {
-        $this->signIn();
+        $this->signInAdmin();
 
         $user = User::factory()->raw(['password' => '']);
 
@@ -112,7 +132,7 @@ class ManageUsersTest extends TestCase
     /** @test */
     public function creating_user_password_must_be_255_or_less()
     {
-        $this->signIn();
+        $this->signInAdmin();
 
         $user = User::factory()->raw([
             'password' => $this->length256
@@ -123,9 +143,9 @@ class ManageUsersTest extends TestCase
     }
 
     /** @test */
-    public function edit_user_screen_can_be_rendered()
+    public function edit_user_screen_can_be_rendered_by_signed_in_admin()
     {
-        $this->signIn();
+        $this->signInAdmin();
 
         $user = User::factory()->create();
 
@@ -136,7 +156,7 @@ class ManageUsersTest extends TestCase
     /** @test */
     public function user_can_be_updated()
     {
-        $this->signIn();
+        $this->signInAdmin();
 
         $user = User::factory()->create([
             'name' => 'asshandle'
@@ -235,9 +255,9 @@ class ManageUsersTest extends TestCase
     }*/
 
     /** @test */
-    public function user_can_be_deleted()
+    public function user_can_be_deleted_by_signed_in_admin()
     {
-        $this->signIn();
+        $this->signInAdmin();
 
         $user = User::factory()->create();
 

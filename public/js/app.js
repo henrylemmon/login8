@@ -17607,7 +17607,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: ['message'],
+  props: ['message', 'type'],
   data: function data() {
     return {
       showAlert: false
@@ -17643,19 +17643,16 @@ __webpack_require__.r(__webpack_exports__);
 
 var _withId = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.withScopeId)("data-v-7b2bf401");
 
-(0,vue__WEBPACK_IMPORTED_MODULE_0__.pushScopeId)("data-v-7b2bf401");
-
-var _hoisted_1 = {
-  key: 0,
-  "class": "alert alert-success position-fixed bottom-0 end-0",
-  role: "alert"
-};
-
-(0,vue__WEBPACK_IMPORTED_MODULE_0__.popScopeId)();
-
 var render = /*#__PURE__*/_withId(function (_ctx, _cache, $props, $setup, $data, $options) {
-  return $data.showAlert ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", _hoisted_1, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.message), 1
-  /* TEXT */
+  return $data.showAlert ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", {
+    key: 0,
+    "class": ["alert alert-success position-fixed bottom-0 end-0", {
+      'alert-success': $props.type === 'success',
+      'alert-danger': $props.type === 'denied'
+    }],
+    role: "alert"
+  }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.message), 3
+  /* TEXT, CLASS */
   )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true);
 });
 

@@ -54,9 +54,11 @@
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="/">Home</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('admin.users.index') }}">Users</a>
-                    </li>
+                    @can('is-admin')
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('admin.users.index') }}">Users</a>
+                        </li>
+                    @endcan
                 </ul>
             </div>
         </div>
@@ -65,7 +67,8 @@
 
 <main class="container" id="app">
     @yield('content')
-    <alert message="{{ session('success') }}"></alert>
+    <alert type="success" message="{{ session('success') }}"></alert>
+    <alert type="denied" message="{{ session('denied') }}"></alert>
 </main>
 </body>
 </html>

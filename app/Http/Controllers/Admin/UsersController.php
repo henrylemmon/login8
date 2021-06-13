@@ -6,10 +6,10 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
-use App\Http\Requests\StoreUserRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\StoreUserRequest;
 
 class UsersController extends Controller
 {
@@ -18,10 +18,15 @@ class UsersController extends Controller
      */
     public function index()
     {
-        if (Gate::denies('logged-in')) {
-            dd('no access allowed');
-        }
         return view('admin.users.index', ['users' => User::paginate(10)]);
+
+        /*if (Gate::allows('is-admin')) {
+            return view('admin.users.index', ['users' => User::paginate(10)]);
+        }*/
+
+        /*request()->session()->flash('denied', 'You must be Admin to go there!');
+
+        return back();*/
     }
 
     /**
