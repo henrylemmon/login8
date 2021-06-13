@@ -18,17 +18,16 @@ class ManageUsersTest extends TestCase
     public function logged_in_non_admin_cannot_access_admin_routes()
     {
         $this->signIn();
-        $userRaw = User::factory()->raw();
         $user = User::factory()->create();
         $this->get(route('admin.users.index'))
             ->assertSessionHas('denied');
         $this->get(route('admin.users.create'))
             ->assertSessionHas('denied');
-        $this->post(route('admin.users.store', $userRaw))
+        $this->post(route('admin.users.store', 1))
             ->assertSessionHas('denied');
         $this->get(route('admin.users.edit', $user->id))
             ->assertSessionHas('denied');
-        $this->patch(route('admin.users.update', $user->id), ['name' => 'asshole'])
+        $this->patch(route('admin.users.update', $user->id), [])
             ->assertSessionHas('denied');
         $this->delete(route('admin.users.index', 1))
             ->assertSessionHas('denied');
@@ -48,9 +47,12 @@ class ManageUsersTest extends TestCase
     {
         $this->signInAdmin();
 
-        $user = User::factory()->raw();
-
-        $this->post(route('admin.users.store'), $user);
+        $this->post(route('admin.users.store'), $user = [
+            'name' => 'henry',
+            'email' => 'henry@mail.com',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+        ]);
 
         $this->assertDatabaseHas('users', [
            'email' => $user['email']
@@ -62,9 +64,12 @@ class ManageUsersTest extends TestCase
     {
         $this->signInAdmin();
 
-        $user = User::factory()->raw(['name' => '']);
-
-        $this->post(route('admin.users.store'), $user)
+        $this->post(route('admin.users.store'), [
+            'name' => null,
+            'email' => 'henry@mail.com',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+        ])
             ->assertSessionHasErrors('name');
     }
 
@@ -73,11 +78,13 @@ class ManageUsersTest extends TestCase
     {
         $this->signInAdmin();
 
-        $user = User::factory()->raw([
-            'name' => $this->length256
-        ]);
-
-        $this->post(route('admin.users.store'), $user)
+        $this->post(route('admin.users.store'), [
+            'name' => $this->length256,
+            'email' => 'henry@mail.com',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+        ])/*;
+        $this->assertDatabaseHas('users', ['email' => 'henry@mail.com']);*/
             ->assertSessionHasErrors('name');
     }
 
@@ -86,9 +93,12 @@ class ManageUsersTest extends TestCase
     {
         $this->signInAdmin();
 
-        $user = User::factory()->raw(['email' => '']);
-
-        $this->post(route('admin.users.store'), $user)
+        $this->post(route('admin.users.store'), [
+            'name' => 'henry',
+            'email' => null,
+            'password' => 'password',
+            'password_confirmation' => 'password',
+        ])
             ->assertSessionHasErrors('email');
     }
 
@@ -97,11 +107,12 @@ class ManageUsersTest extends TestCase
     {
         $this->signInAdmin();
 
-        $user = User::factory()->raw([
-            'email' => $this->length256
-        ]);
-
-        $this->post(route('admin.users.store'), $user)
+        $this->post(route('admin.users.store'), [
+            'name' => 'henry',
+            'email' => $this->length256,
+            'password' => 'password',
+            'password_confirmation' => 'password',
+        ])
             ->assertSessionHasErrors('email');
     }
 
@@ -110,11 +121,12 @@ class ManageUsersTest extends TestCase
     {
         $this->signInAdmin();
 
-        $user = User::factory()->raw([
-            'email' => 'asshandle'
-        ]);
-
-        $this->post(route('admin.users.store'), $user)
+        $this->post(route('admin.users.store'), [
+            'name' => 'henry',
+            'email' => 'asshandle',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+        ])
             ->assertSessionHasErrors('email');
     }
 
@@ -123,9 +135,26 @@ class ManageUsersTest extends TestCase
     {
         $this->signInAdmin();
 
-        $user = User::factory()->raw(['password' => '']);
+        $this->post(route('admin.users.store'), [
+            'name' => 'henry',
+            'email' => 'henry@mail.com',
+            'password' => null,
+            'password_confirmation' => 'password',
+        ])
+            ->assertSessionHasErrors('password');
+    }
 
-        $this->post(route('admin.users.store'), $user)
+    /** @test */
+    public function creating_a_user_requires_the_passwords_match()
+    {
+        $this->signInAdmin();
+
+        $this->post(route('admin.users.store'), [
+            'name' => 'henry',
+            'email' => 'henry@mail.com',
+            'password' => 'assword',
+            'password_confirmation' => 'password',
+        ])
             ->assertSessionHasErrors('password');
     }
 
@@ -134,11 +163,12 @@ class ManageUsersTest extends TestCase
     {
         $this->signInAdmin();
 
-        $user = User::factory()->raw([
-            'password' => $this->length256
-        ]);
-
-        $this->post(route('admin.users.store'), $user)
+        $this->post(route('admin.users.store'), [
+            'name' => 'henry',
+            'email' => 'henry@mail.com',
+            'password' => $this->length256,
+            'password_confirmation' => $this->length256,
+        ])
             ->assertSessionHasErrors('password');
     }
 
@@ -172,37 +202,35 @@ class ManageUsersTest extends TestCase
         ]);
     }
 
-    /*public function updating_a_user_requires_a_name()
+    /** @test */
+    public function updating_a_user_requires_a_name()
     {
-        $user = User::factory()->create([
-            'name' => 'asshandle',
-            'email' => 'asshandle@mail.com',
-        ]);
+        $this->signInAdmin();
+
+        $user = User::factory()->create();
 
         $userChanged = [
-            'name' => '',
-            'email' => 'asshandle@mail.com'
+            'name' => null,
         ];
 
         $this->patch(route('admin.users.update', $user->id), $userChanged)
             ->assertSessionHasErrors('name');
-    }*/
+    }
 
-    /*public function updating_a_user_name_must_be_255_or_less()
+    /** @test */
+    public function updating_a_user_name_must_be_255_or_less()
     {
-        $user = User::factory()->create([
-            'name' => 'asshandle',
-            'email' => 'asshandle@mail.com',
-        ]);
+        $this->signInAdmin();
+
+        $user = User::factory()->create();
 
         $userChanged = [
             'name' => $this->length256,
-            'email' => 'asshandle@mail.com'
         ];
 
         $this->patch(route('admin.users.update', $user->id), $userChanged)
             ->assertSessionHasErrors('name');
-    }*/
+    }
 
 
     /*public function updating_a_user_requires_a_email()

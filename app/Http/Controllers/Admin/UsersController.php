@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
+use App\Actions\Fortify\CreateNewUser;
 use App\Http\Requests\StoreUserRequest;
 
 class UsersController extends Controller
@@ -44,11 +45,19 @@ class UsersController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
-        $validatedAttributes = $request->validated();
+        /*$validatedAttributes = $request->validated();
 
         $validatedAttributes['password'] = Hash::make($validatedAttributes['password']);
 
-        $user = User::create($validatedAttributes);
+        $user = User::create($validatedAttributes);*/
+
+        $newUser = new CreateNewUser();
+        $user = $newUser->create(request()->only([
+            'name',
+            'email',
+            'password',
+            'password_confirmation',
+        ]));
 
         $user->roles()->attach($request->roles);
 
@@ -84,6 +93,10 @@ class UsersController extends Controller
      */
     public function update(Request $request, User $user)
     {
+        request()->validate([
+            'name' => 'required|max:255'
+        ]);
+
         $user->update($request->except(['_token', 'roles']));
 
         $user->roles()->sync($request->roles);

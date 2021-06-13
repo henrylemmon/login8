@@ -44,6 +44,20 @@
             </span>
         @enderror
     </div>
+
+    <div class="mb-3">
+        <label for="password_confirmation" class="form-label">Confirm Password</label>
+        <input
+            name="password_confirmation"
+            type="password"
+            class="form-control"
+            id="password_confirmation">
+        @error('password_confirmation')
+            <span class="invalid-feedback" role="alert">
+                <small>{{ $message }}</small>
+            </span>
+        @enderror
+    </div>
 @endisset
 <div class="mb-3">
     @foreach($roles as $role)
