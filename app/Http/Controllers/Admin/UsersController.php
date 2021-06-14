@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use App\Actions\Fortify\CreateNewUser;
 use App\Http\Requests\StoreUserRequest;
+use Illuminate\Support\Facades\Password;
 
 class UsersController extends Controller
 {
@@ -62,6 +63,8 @@ class UsersController extends Controller
         $user->roles()->attach($request->roles);
 
         request()->session()->flash('success', 'The User has been Created!');
+
+        Password::sendResetLink(['email' => request()->email]);
 
         return redirect(route('admin.users.index'));
     }

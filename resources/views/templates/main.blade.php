@@ -68,6 +68,7 @@
 <main class="container" id="app">
     @yield('content')
     <alert type="success" message="{{ session('success') }}"></alert>
+    <alert type="success" message="{{ session('status') }}"></alert>
     <alert type="denied" message="{{ session('denied') }}"></alert>
 </main>
 </body>
