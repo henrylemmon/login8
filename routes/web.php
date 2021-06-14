@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\UsersController;
+use App\Http\Controllers\User\ProfilesController;
 
 
 /*
@@ -19,7 +20,10 @@ Route::get('/', function () {
     return view('index');
 });
 
-// Admin Routes
-Route::prefix('admin')->middleware(['auth', 'auth.isAdmin', 'verified'])->name('admin.')->group(function () {
+Route::prefix('user')->name('user.')->middleware(['auth', 'verified'])->group(function () {
+    Route::get('profile', ProfilesController::class)->name('profile');
+});
+
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'auth.isAdmin', 'verified'])->group(function () {
     Route::resource('/users', UsersController::class);
 });

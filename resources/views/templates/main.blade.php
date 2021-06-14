@@ -23,7 +23,7 @@
                 <div>
                     @auth
                         <div class="me-4 text-white d-inline">Welcome {{ auth()->user()->name }}</div>
-                        <a href="{{ url('/') }}">Home</a>
+                        <a href="{{ route('user.profile') }}">Profile</a>
                         <a href="{{ route('logout') }}"
                            onclick="event.preventDefault();
                            document.getElementById('logout_form').submit();">
