@@ -20,6 +20,6 @@ Route::get('/', function () {
 });
 
 // Admin Routes
-Route::prefix('admin')->middleware(['auth', 'auth.isAdmin'])->name('admin.')->group(function () {
+Route::prefix('admin')->middleware(['auth', 'auth.isAdmin', 'verified'])->name('admin.')->group(function () {
     Route::resource('/users', UsersController::class);
 });
